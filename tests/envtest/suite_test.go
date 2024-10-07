@@ -128,7 +128,7 @@ var _ = BeforeSuite(func() {
 	err = plugin.Init(pluginContext)
 	Expect(err).ToNot(HaveOccurred())
 	err = (&controller.WorkloadController{
-		Logger:                  ctrl.Log.WithName("reconciler").WithName("vulnerabilityreport"),
+		Logger:                  ctrl.Log.WithName("reconciler").WithName("vulnerabilityreport-test"),
 		Config:                  config,
 		Client:                  managerClient,
 		ObjectResolver:          objectResolver,
