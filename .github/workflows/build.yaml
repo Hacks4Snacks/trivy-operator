@@ -207,7 +207,7 @@ jobs:
           chmod 700 get_helm.sh
 
           ./get_helm.sh
-      - name: Image scan mode producing vulnerability,misconfig and exposedsecrets
+      - name: Image scan mode producing vulnerability, misconfig, and exposedsecrets
           reports tests
         run: >
           kubectl create namespace e2e-test
@@ -215,14 +215,14 @@ jobs:
           ./bin/kuttl test --start-kind=false --namespace e2e-test --config tests/e2e/config/image-mode.yaml
 
           ./tests/resources-cleanup.sh > /dev/null 2>&1
-      - name: Files System scan mode producing vulnerability,misconfig and exposedsecrets reports tests
+      - name: Files System scan mode producing vulnerability, misconfig, and exposedsecrets reports tests
         run: |
           kubectl create namespace e2e-test
 
           ./bin/kuttl test --start-kind=false --namespace e2e-test --config tests/e2e/config/fs-mode.yaml
 
           ./tests/resources-cleanup.sh > /dev/null 2>&1
-      - name: Client/server mode producing vulnerability,misconfig and exposedsecrets
+      - name: Client/server mode producing vulnerability, misconfig, and exposedsecrets
           reports tests
         run: >
           kubectl create namespace e2e-test
@@ -230,7 +230,7 @@ jobs:
           ./bin/kuttl test --start-kind=false --namespace e2e-test --config tests/e2e/config/client-server.yaml
 
           ./tests/resources-cleanup.sh > /dev/null 2>&1
-      - name: Standalon mode with Sbom scanning
+      - name: Standalone mode with SBOM scanning
           reports tests
         run: >
           kubectl create namespace e2e-test
@@ -238,7 +238,7 @@ jobs:
           ./bin/kuttl test --start-kind=false --namespace e2e-test --config tests/e2e/config/sbom-standalone.yaml
 
           ./tests/resources-cleanup.sh > /dev/null 2>&1
-      - name: Client/Server with Sbom scanning
+      - name: Client/Server with SBOM scanning
           reports tests
         run: >
           kubectl create namespace e2e-test
@@ -246,7 +246,7 @@ jobs:
           ./bin/kuttl test --start-kind=false --namespace e2e-test --config tests/e2e/config/client-server-sbom.yaml
 
           ./tests/resources-cleanup.sh > /dev/null 2>&1
-      - name: file system with Sbom scanning
+      - name: file system with SBOM scanning
           reports tests
         run: >
           kubectl create namespace e2e-test
