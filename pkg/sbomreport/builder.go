@@ -119,6 +119,14 @@ func (b *ReportBuilder) NamespacedReport() (v1alpha1.SbomReport, error) {
 		},
 		Report: b.data,
 	}
+
+	// Set the TTL annotation if cacheTTL is specified
+	if b.cacheTTL != nil {
+		report.Annotations = map[string]string{
+			v1alpha1.TTLReportAnnotation: b.cacheTTL.String(),
+		}
+	}
+
 	err := kube.ObjectToObjectMeta(b.controller, &report.ObjectMeta)
 	if err != nil {
 		return v1alpha1.SbomReport{}, err
