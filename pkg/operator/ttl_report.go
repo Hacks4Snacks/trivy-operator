@@ -3,6 +3,7 @@ package operator
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/aquasecurity/trivy-operator/pkg/configauditreport"
@@ -62,7 +63,12 @@ func (r *TTLReportReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		return err
 	}
 	for _, reportType := range ttlResources {
+		// Extract the kind of the report
+		gvk := reportType.ForObject.GetObjectKind().GroupVersionKind()
+		kind := strings.ToLower(gvk.Kind)
+
 		err = ctrl.NewControllerManagedBy(mgr).
+			Named(fmt.Sprintf("ttl-report-reconciler-%s", kind)).
 			For(reportType.ForObject, builder.WithPredicates(
 				predicate.Not(predicate.IsBeingTerminated),
 				installModePredicate)).

@@ -48,6 +48,7 @@ func (r *NodeCollectorJobController) SetupWithManager(mgr ctrl.Manager) error {
 
 	predicates = append(predicates, ManagedByTrivyOperator, IsNodeInfoCollector, JobHasAnyCondition)
 	return ctrl.NewControllerManagedBy(mgr).
+		Named("node-collector-job-controller").
 		For(&batchv1.Job{}, builder.WithPredicates(predicates...)).
 		Complete(r.reconcileJobs())
 }

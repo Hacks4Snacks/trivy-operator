@@ -140,9 +140,11 @@ func (r *ResourceController) SetupWithManager(mgr ctrl.Manager) error {
 }
 
 func (r *ResourceController) buildControlMgr(mgr ctrl.Manager, configResource kube.Resource, installModePredicate k8s_predicate.Predicate) *builder.Builder {
-	return ctrl.NewControllerManagedBy(mgr).WithOptions(controller.Options{
-		CacheSyncTimeout: r.CacheSyncTimeout,
-	}).
+	return ctrl.NewControllerManagedBy(mgr).
+		WithOptions(controller.Options{
+			CacheSyncTimeout: r.CacheSyncTimeout,
+		}).
+		Named(fmt.Sprintf("resource-controller-%s", strings.ToLower(string(configResource.Kind)))).
 		For(configResource.ForObject, builder.WithPredicates(
 			predicate.Not(predicate.ManagedByTrivyOperator),
 			predicate.Not(predicate.IsLeaderElectionResource),
