@@ -2,11 +2,12 @@ package metrics
 
 import (
 	"context"
+	"strconv"
+
 	"github.com/aquasecurity/trivy-operator/pkg/kube"
 	"github.com/aquasecurity/trivy-operator/pkg/trivyoperator"
 	"github.com/go-logr/logr"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"strconv"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -70,7 +71,7 @@ const (
 	infra_assessment_category    = "infra_assessment_category"
 	infra_assessment_success     = "infra_assessment_success"
 
-	// image infomation
+	// image information
 	image_os_family = "image_os_family"
 	image_os_name   = "image_os_name"
 	image_os_eosl   = "image_os_eosl"

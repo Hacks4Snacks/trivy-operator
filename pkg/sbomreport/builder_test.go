@@ -69,7 +69,7 @@ func TestArtifactRef(t *testing.T) {
 		want string
 	}{
 		{
-			name: "get image ref with libary",
+			name: "get image ref with library",
 			data: v1alpha1.SbomReportData{
 				Registry: v1alpha1.Registry{
 					Server: "index.docker.io",
@@ -82,7 +82,7 @@ func TestArtifactRef(t *testing.T) {
 			want: "56bcdb7c95",
 		},
 		{
-			name: "get image ref without libary",
+			name: "get image ref without library",
 			data: v1alpha1.SbomReportData{
 				Registry: v1alpha1.Registry{
 					Server: "index.docker.io",

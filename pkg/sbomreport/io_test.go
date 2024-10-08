@@ -283,13 +283,13 @@ func TestImageRef(t *testing.T) {
 		want    string
 	}{
 		{
-			name:    "get image ref with libary",
+			name:    "get image ref with library",
 			imageID: "index.docker.io/library/alpine:3.12.0",
 
 			want: "56bcdb7c95",
 		},
 		{
-			name:    "get image ref without libary",
+			name:    "get image ref without library",
 			imageID: "index.docker.io/alpine:3.12.0",
 
 			want: "56bcdb7c95",
