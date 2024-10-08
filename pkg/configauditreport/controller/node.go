@@ -161,7 +161,7 @@ func (r *NodeReconciler) reconcileNodes() reconcile.Func {
 
 		requirements, err := tc.GetResourceRequirements()
 		if err != nil {
-			return ctrl.Result{}, fmt.Errorf("getting node-collector resource requierments: %w", err)
+			return ctrl.Result{}, fmt.Errorf("getting node-collector resource requirements: %w", err)
 		}
 
 		scanJobPodPriorityClassName, err := r.GetScanJobPodPriorityClassName()

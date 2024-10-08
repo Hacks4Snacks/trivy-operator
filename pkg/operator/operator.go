@@ -45,7 +45,7 @@ var (
 	setupLog = log.Log.WithName("operator")
 )
 
-// Start starts all registered reconcilers and blocks until the context is cancelled.
+// Start starts all registered reconcilers and blocks until the context is canceled.
 // Returns an error if there is an error starting any reconciler.
 func Start(ctx context.Context, buildInfo trivyoperator.BuildInfo, operatorConfig etc.Config) error {
 	installMode, operatorNamespace, targetNamespaces, err := operatorConfig.ResolveInstallMode()
