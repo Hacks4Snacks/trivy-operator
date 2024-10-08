@@ -1415,6 +1415,10 @@ spec:
                             type: number
                           V3Vector:
                             type: string
+                          V40Score:
+                            type: number
+                          V40Vector:
+                            type: string
                         type: object
                       type: object
                     cvsssource:
@@ -2864,6 +2868,10 @@ spec:
                             type: number
                           V3Vector:
                             type: string
+                          V40Score:
+                            type: number
+                          V40Vector:
+                            type: string
                         type: object
                       type: object
                     cvsssource:
@@ -3063,7 +3071,7 @@ metadata:
     app.kubernetes.io/managed-by: kubectl
 data:
   trivy.repository: "ghcr.io/aquasecurity/trivy"
-  trivy.tag: "0.53.0"
+  trivy.tag: "0.54.1"
   trivy.imagePullPolicy: "IfNotPresent"
   trivy.additionalVulnerabilityReportFields: ""
   trivy.severity: "UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL"
