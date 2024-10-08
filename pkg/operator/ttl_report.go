@@ -3,6 +3,7 @@ package operator
 import (
 	"context"
 	"fmt"
+	"reflect"
 	"strings"
 	"time"
 
@@ -63,9 +64,9 @@ func (r *TTLReportReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		return err
 	}
 	for _, reportType := range ttlResources {
-		// Extract the kind of the report
-		gvk := reportType.ForObject.GetObjectKind().GroupVersionKind()
-		kind := strings.ToLower(gvk.Kind)
+		// Extract the kind of the report using reflection
+		typeName := reflect.TypeOf(reportType.ForObject).Elem().Name()
+		kind := strings.ToLower(typeName)
 
 		err = ctrl.NewControllerManagedBy(mgr).
 			Named(fmt.Sprintf("ttl-report-reconciler-%s", kind)).
