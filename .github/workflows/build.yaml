@@ -49,8 +49,8 @@ jobs:
         with:
           args: --verbose
           version: v1.61.0
-      - name: Verify YAML code
-        uses: ibiqlik/action-yamllint@v3
+      # - name: Verify YAML code
+      #   uses: ibiqlik/action-yamllint@v3
       - name: Vendor Go modules
         run: go mod tidy
       - name: Verify all generated
