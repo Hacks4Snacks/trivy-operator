@@ -5,6 +5,7 @@ commands:
   - command: helm install trivy-operator ./deploy/helm --namespace trivy-system
       --create-namespace --set="image.tag=e2e"
       --set="excludeNamespaces=kube-system"
+      --set="trivy.dbRepository=public.ecr.aws/aquasecurity/trivy-db"
 testDirs:
   - tests/e2e/image-private-registries-sa/data/
 manifestDirs:
