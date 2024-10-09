@@ -12,7 +12,6 @@ import (
 	ocpappsv1 "github.com/openshift/api/apps/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
-	batchv1beta1 "k8s.io/api/batch/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	networkingv1 "k8s.io/api/networking/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
@@ -70,9 +69,8 @@ const (
 	DeployerPodForDeploymentAnnotation string = "openshift.io/deployment-config.name"
 )
 const (
-	cronJobResource        = "cronjobs"
-	apiBatchV1beta1CronJob = "batch/v1beta1, Kind=CronJob"
-	apiBatchV1CronJob      = "batch/v1, Kind=CronJob"
+	cronJobResource   = "cronjobs"
+	apiBatchV1CronJob = "batch/v1, Kind=CronJob"
 )
 
 // IsBuiltInWorkload returns true if the specified v1.OwnerReference
@@ -201,7 +199,7 @@ func ObjectRefFromKindAndObjectKey(kind Kind, name client.ObjectKey) ObjectRef {
 // security report.
 func ComputeSpecHash(obj client.Object) (string, error) {
 	switch t := obj.(type) {
-	case *corev1.Pod, *appsv1.Deployment, *appsv1.ReplicaSet, *corev1.ReplicationController, *appsv1.StatefulSet, *appsv1.DaemonSet, *batchv1.CronJob, *batchv1beta1.CronJob, *batchv1.Job:
+	case *corev1.Pod, *appsv1.Deployment, *appsv1.ReplicaSet, *corev1.ReplicationController, *appsv1.StatefulSet, *appsv1.DaemonSet, *batchv1.CronJob, *batchv1.Job:
 		spec, err := GetPodSpec(obj)
 		if err != nil {
 			return "", err
@@ -252,8 +250,6 @@ func GetPodSpec(obj client.Object) (corev1.PodSpec, error) {
 		return (obj.(*appsv1.StatefulSet)).Spec.Template.Spec, nil
 	case *appsv1.DaemonSet:
 		return (obj.(*appsv1.DaemonSet)).Spec.Template.Spec, nil
-	case *batchv1beta1.CronJob:
-		return (obj.(*batchv1beta1.CronJob)).Spec.JobTemplate.Spec.Template.Spec, nil
 	case *batchv1.CronJob:
 		return (obj.(*batchv1.CronJob)).Spec.JobTemplate.Spec.Template.Spec, nil
 	case *batchv1.Job:
@@ -309,8 +305,6 @@ func InitCompatibleMgr() (CompatibleMgr, error) {
 // return a map of supported object api per k8s version
 func supportedObjectsByK8sKind(api string) client.Object {
 	switch api {
-	case apiBatchV1beta1CronJob:
-		return &batchv1beta1.CronJob{}
 	case apiBatchV1CronJob:
 		return &batchv1.CronJob{}
 	default:
@@ -424,7 +418,7 @@ func (o *ObjectResolver) ReportOwner(ctx context.Context, obj client.Object) (cl
 		}
 		// Pod controlled by sth else (usually frameworks)
 		return obj, nil
-	case *appsv1.ReplicaSet, *corev1.ReplicationController, *appsv1.StatefulSet, *appsv1.DaemonSet, *batchv1beta1.CronJob, *batchv1.CronJob:
+	case *appsv1.ReplicaSet, *corev1.ReplicationController, *appsv1.StatefulSet, *appsv1.DaemonSet, *batchv1.CronJob:
 		return obj, nil
 	default:
 		return obj, nil
@@ -619,8 +613,6 @@ func (o *ObjectResolver) GetNodeName(ctx context.Context, obj client.Object) (st
 			return "", err
 		}
 		return pods[0].Spec.NodeName, nil
-	case *batchv1beta1.CronJob:
-		return "", ErrUnSupportedKind
 	case *batchv1.CronJob:
 		return "", ErrUnSupportedKind
 	case *batchv1.Job:

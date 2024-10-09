@@ -2,10 +2,10 @@ package rbacassessment_test
 
 import (
 	"context"
-	"k8s.io/api/batch/v1beta1"
 	"testing"
 
 	"github.com/aquasecurity/trivy-operator/pkg/rbacassessment"
+	v1 "k8s.io/api/batch/v1"
 
 	"github.com/aquasecurity/trivy-operator/pkg/apis/aquasecurity/v1alpha1"
 	"github.com/aquasecurity/trivy-operator/pkg/kube"
@@ -418,7 +418,7 @@ func TestReadWriter(t *testing.T) {
 						},
 					},
 					Report: v1alpha1.RbacAssessmentReportData{},
-				}, &v1beta1.CronJob{}).
+				}, &v1.CronJob{}).
 			Build()
 		resolver := kube.NewObjectResolver(testClient, &kube.CompatibleObjectMapper{})
 		readWriter := rbacassessment.NewReadWriter(&resolver)

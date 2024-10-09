@@ -29,7 +29,6 @@ import (
 	"github.com/stretchr/testify/require"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/batch/v1"
-	"k8s.io/api/batch/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -6497,7 +6496,7 @@ default ignore = false`,
 						Namespace: "trivyoperator-ns",
 					},
 					Data: tc.config,
-				}, &v1beta1.CronJob{}).Build()
+				}, &v1.CronJob{}).Build()
 			pluginContext := trivyoperator.NewPluginContext().
 				WithName(trivy.Plugin).
 				WithNamespace("trivyoperator-ns").

@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	v1 "k8s.io/api/batch/v1"
-	"k8s.io/api/batch/v1beta1"
 
 	"github.com/aquasecurity/trivy-operator/pkg/apis/aquasecurity/v1alpha1"
 	"github.com/aquasecurity/trivy-operator/pkg/configauditreport"
@@ -78,7 +77,7 @@ func TestReadWriter(t *testing.T) {
 	})
 
 	t.Run("Should update ConfigAuditReport", func(t *testing.T) {
-		testClient := fake.NewClientBuilder().WithScheme(kubernetesScheme).WithObjects(&v1beta1.CronJob{}, &v1alpha1.ConfigAuditReport{
+		testClient := fake.NewClientBuilder().WithScheme(kubernetesScheme).WithObjects(&v1.CronJob{}, &v1alpha1.ConfigAuditReport{
 			TypeMeta: metav1.TypeMeta{
 				Kind:       "ConfigAuditReport",
 				APIVersion: "aquasecurity.github.io/v1alpha1",
@@ -157,7 +156,7 @@ func TestReadWriter(t *testing.T) {
 	})
 
 	t.Run("Should find ConfigAuditReport by owner", func(t *testing.T) {
-		testClient := fake.NewClientBuilder().WithScheme(kubernetesScheme).WithObjects(&v1beta1.CronJob{},
+		testClient := fake.NewClientBuilder().WithScheme(kubernetesScheme).WithObjects(&v1.CronJob{},
 			&v1alpha1.ConfigAuditReport{
 				ObjectMeta: metav1.ObjectMeta{
 					Namespace:       "my-namespace",
@@ -317,7 +316,7 @@ func TestReadWriter(t *testing.T) {
 
 	t.Run("Should update ClusterConfigAuditReport", func(t *testing.T) {
 		testClient := fake.NewClientBuilder().
-			WithScheme(kubernetesScheme).WithObjects(&v1beta1.CronJob{},
+			WithScheme(kubernetesScheme).WithObjects(&v1.CronJob{},
 			&v1alpha1.ClusterConfigAuditReport{
 				TypeMeta: metav1.TypeMeta{
 					Kind:       "ClusterConfigAuditReport",
