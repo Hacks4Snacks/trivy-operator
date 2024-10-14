@@ -94,6 +94,7 @@ func (p *plugin) Init(ctx trivyoperator.PluginContext) error {
 			keyResourcesRequestsMemory:        "100Mi",
 			keyResourcesLimitsCPU:             "500m",
 			keyResourcesLimitsMemory:          "500Mi",
+			KeyTrivyContainerdNamespace:       "k8s.io",
 		},
 	})
 }

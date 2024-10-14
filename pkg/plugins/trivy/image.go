@@ -248,6 +248,12 @@ func GetPodSpecForStandaloneMode(ctx trivyoperator.PluginContext,
 			return corev1.PodSpec{}, nil, err
 		}
 
+		containerdNamespace := config.GetContainerdNamespace()
+		env = append(env, corev1.EnvVar{
+			Name:  "CONTAINERD_NAMESPACE",
+			Value: containerdNamespace,
+		})
+
 		resourceRequirements, err := config.GetResourceRequirements()
 		if err != nil {
 			return corev1.PodSpec{}, nil, err
@@ -468,6 +474,12 @@ func GetPodSpecForClientServerMode(ctx trivyoperator.PluginContext, config Confi
 		if err != nil {
 			return corev1.PodSpec{}, nil, err
 		}
+
+		containerdNamespace := config.GetContainerdNamespace()
+		env = append(env, corev1.EnvVar{
+			Name:  "CONTAINERD_NAMESPACE",
+			Value: containerdNamespace,
+		})
 
 		if config.GetServerInsecure() {
 			env = append(env, corev1.EnvVar{
