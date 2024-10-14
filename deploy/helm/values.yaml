@@ -566,6 +566,7 @@ trivy:
   serverPassword: ""
   # -- serverServiceName this param is the server service name to be used in cluster
   serverServiceName: "trivy-service"
+  containerdNamespace: "k8s.io"
   # -- debug One of `true` or `false`. Enables debug mode.
   debug: false
 
