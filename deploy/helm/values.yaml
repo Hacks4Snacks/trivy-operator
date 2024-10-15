@@ -73,10 +73,8 @@ operator:
 
   # -- scanJobsRetryDelay the duration to wait before retrying a failed scan job
   scanJobsRetryDelay: 30s
-  
   # -- scanJobsDelayRequeue the duration to wait before requeueing a scan job that was not processed (e.g. because of a concurrency limit)
   scanJobsDelayRequeue: 60s
-
   # -- the flag to enable vulnerability scanner
   vulnerabilityScannerEnabled: true
   # -- the flag to enable sbom generation, required for enabling ClusterVulnerabilityReports
