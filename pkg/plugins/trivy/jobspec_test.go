@@ -85,7 +85,8 @@ func TestCreateVolumes(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			trivy.CreateVolumeSbomFiles(&tc.vm, &tc.v, &tc.sn, tc.fn, tc.mountPath, tc.cName)
+			mountPath := tc.mountPath
+			trivy.CreateVolumeSbomFiles(tc.sn, tc.fn, mountPath, tc.cName)
 
 			assert.Equal(t, len(tc.vm), 1)
 			assert.Equal(t, len(tc.v), 1)
