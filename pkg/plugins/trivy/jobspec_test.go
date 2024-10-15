@@ -52,8 +52,6 @@ func TestCreateSbomDataSecret(t *testing.T) {
 func TestCreateVolumes(t *testing.T) {
 	testCases := []struct {
 		name         string
-		vm           []corev1.VolumeMount
-		v            []corev1.Volume
 		cName        string
 		sn           string
 		fn           string
@@ -62,8 +60,6 @@ func TestCreateVolumes(t *testing.T) {
 	}{
 		{
 			name:         "create volumes with normal cname",
-			vm:           []corev1.VolumeMount{},
-			v:            []corev1.Volume{},
 			sn:           "test",
 			cName:        "cname",
 			mountPath:    "/sbom-cname",
@@ -72,8 +68,6 @@ func TestCreateVolumes(t *testing.T) {
 		},
 		{
 			name:         "create volumes with long cname",
-			vm:           []corev1.VolumeMount{},
-			v:            []corev1.Volume{},
 			sn:           "test",
 			cName:        "averylongcontainername1234567890averylongcontainername1234567890",
 			mountPath:    "/sbom-longname",
@@ -85,21 +79,22 @@ func TestCreateVolumes(t *testing.T) {
 	for _, tc := range testCases {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
-			mountPath := tc.mountPath
-			trivy.CreateVolumeSbomFiles(tc.sn, tc.fn, mountPath, tc.cName)
+			volume, volumeMount := trivy.CreateVolumeSbomFiles(tc.sn, tc.fn, tc.mountPath, tc.cName)
 
-			assert.Equal(t, len(tc.vm), 1)
-			assert.Equal(t, len(tc.v), 1)
+			// Assertions for VolumeMount
+			assert.Equal(t, tc.expectedName, volumeMount.Name)
+			assert.Equal(t, tc.mountPath, volumeMount.MountPath)
+			assert.True(t, volumeMount.ReadOnly)
 
-			assert.Equal(t, tc.vm[0].Name, tc.expectedName)
-			assert.Equal(t, tc.vm[0].MountPath, tc.mountPath)
-			assert.Equal(t, tc.v[0].Name, tc.expectedName)
-			assert.Equal(t, tc.v[0].Secret.SecretName, tc.sn)
-			assert.Equal(t, tc.v[0].Secret.Items[0].Key, "bom")
-			assert.Equal(t, tc.v[0].Secret.Items[0].Path, tc.fn)
+			// Assertions for Volume
+			assert.Equal(t, tc.expectedName, volume.Name)
+			assert.Equal(t, tc.sn, volume.VolumeSource.Secret.SecretName)
+			assert.Equal(t, "bom", volume.VolumeSource.Secret.Items[0].Key)
+			assert.Equal(t, tc.fn, volume.VolumeSource.Secret.Items[0].Path)
 
-			assert.LessOrEqual(t, len(tc.vm[0].Name), 63)
-			assert.LessOrEqual(t, len(tc.v[0].Name), 63)
+			// Length checks to ensure names are within Kubernetes limits
+			assert.LessOrEqual(t, len(volumeMount.Name), 63)
+			assert.LessOrEqual(t, len(volume.Name), 63)
 		})
 	}
 }
