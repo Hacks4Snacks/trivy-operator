@@ -98,14 +98,18 @@ func GetPodSpecForStandaloneMode(ctx trivyoperator.PluginContext,
 
 	cacheDir := config.GetImageScanCacheDir()
 
-	volumeMounts := []corev1.VolumeMount{
+	// add tmp volume mount
+	sharedVolumeMounts := []corev1.VolumeMount{
 		{
 			Name:      tmpVolumeName,
 			ReadOnly:  false,
 			MountPath: "/tmp",
 		},
+		getScanResultVolumeMount(),
 	}
-	volumes := []corev1.Volume{
+
+	// add tmp volume
+	sharedVolumes := []corev1.Volume{
 		{
 			Name: tmpVolumeName,
 			VolumeSource: corev1.VolumeSource{
@@ -114,11 +118,12 @@ func GetPodSpecForStandaloneMode(ctx trivyoperator.PluginContext,
 				},
 			},
 		},
+		getScanResultVolume(),
 	}
 
 	if volume, volumeMount := config.GenerateSslCertDirVolumeIfAvailable(trivyConfigName); volume != nil && volumeMount != nil {
-		volumes = append(volumes, *volume)
-		volumeMounts = append(volumeMounts, *volumeMount)
+		sharedVolumes = append(sharedVolumes, *volume)
+		sharedVolumeMounts = append(sharedVolumeMounts, *volumeMount)
 	}
 	initContainer := corev1.Container{
 		Name:                     p.idGenerator.GenerateID(),
@@ -139,27 +144,27 @@ func GetPodSpecForStandaloneMode(ctx trivyoperator.PluginContext,
 		},
 		Resources:       requirements,
 		SecurityContext: securityContext,
-		VolumeMounts:    volumeMounts,
+		VolumeMounts:    sharedVolumeMounts,
 	}
 
 	var containers []corev1.Container
 
-	volumeMounts = append(volumeMounts, getScanResultVolumeMount())
-	volumes = append(volumes, getScanResultVolume())
-
 	if volume, volumeMount := config.GenerateIgnoreFileVolumeIfAvailable(trivyConfigName); volume != nil && volumeMount != nil {
-		volumes = append(volumes, *volume)
-		volumeMounts = append(volumeMounts, *volumeMount)
+		sharedVolumes = append(sharedVolumes, *volume)
+		sharedVolumeMounts = append(sharedVolumeMounts, *volumeMount)
 	}
 	if volume, volumeMount := config.GenerateIgnorePolicyVolumeIfAvailable(trivyConfigName, workload); volume != nil && volumeMount != nil {
-		volumes = append(volumes, *volume)
-		volumeMounts = append(volumeMounts, *volumeMount)
+		sharedVolumes = append(sharedVolumes, *volume)
+		sharedVolumeMounts = append(sharedVolumeMounts, *volumeMount)
 	}
+	// Initialize the list of all volumes with shared volumes
+	allVolumes := sharedVolumes
 
 	for _, c := range containersSpec {
 		if ExcludeImage(ctx.GetTrivyOperatorConfig().ExcludeImages(), c.Image) {
 			continue
 		}
+		containerVolumeMounts := append([]corev1.VolumeMount{}, sharedVolumeMounts...)
 		env := []corev1.EnvVar{
 			constructEnvVarSourceFromConfigMap("TRIVY_SEVERITY", trivyConfigName, KeyTrivySeverity),
 			constructEnvVarSourceFromConfigMap("TRIVY_IGNORE_UNFIXED", trivyConfigName, keyTrivyIgnoreUnfixed),
@@ -211,7 +216,7 @@ func GetPodSpecForStandaloneMode(ctx trivyoperator.PluginContext,
 			secretName := secret.Name
 			if CheckGcpCrOrPrivateRegistry(c.Image) &&
 				ctx.GetTrivyOperatorConfig().GetScanJobUseGCRServiceAccount() {
-				createEnvandVolumeForGcr(&env, &volumeMounts, &volumes, &registryPasswordKey, &secretName)
+				createEnvandVolumeForGcr(&env, &sharedVolumeMounts, &sharedVolumes, &registryPasswordKey, &secretName)
 			} else {
 				env = append(env, corev1.EnvVar{
 					Name: "TRIVY_USERNAME",
@@ -275,7 +280,19 @@ func GetPodSpecForStandaloneMode(ctx trivyoperator.PluginContext,
 				secrets = append(secrets, &secret)
 				fileName := fmt.Sprintf("%s.json", secretName)
 				mountPath := fmt.Sprintf("/sbom-%s", c.Name)
-				CreateVolumeSbomFiles(&volumeMounts, &volumes, &secretName, fileName, mountPath, c.Name)
+				sbomVolume, sbomMount := CreateVolumeSbomFiles(secretName, fileName, mountPath, c.Name)
+				// Create the volume and add it to the volumes slice if not already present
+				volumeExists := false
+				for _, v := range allVolumes {
+					if v.Name == sbomVolume.Name {
+						volumeExists = true
+						break
+					}
+				}
+				if !volumeExists {
+					allVolumes = append(allVolumes, sbomVolume)
+				}
+				containerVolumeMounts = append(containerVolumeMounts, sbomMount)
 				cmd, args = GetSbomScanCommandAndArgs(ctx, Standalone, fmt.Sprintf("%s/%s", mountPath, fileName), "", resultFileName)
 			}
 		}
@@ -289,7 +306,7 @@ func GetPodSpecForStandaloneMode(ctx trivyoperator.PluginContext,
 			Args:                     args,
 			Resources:                resourceRequirements,
 			SecurityContext:          securityContext,
-			VolumeMounts:             volumeMounts,
+			VolumeMounts:             containerVolumeMounts,
 		})
 	}
 
@@ -298,7 +315,7 @@ func GetPodSpecForStandaloneMode(ctx trivyoperator.PluginContext,
 		RestartPolicy:                corev1.RestartPolicyNever,
 		ServiceAccountName:           ctx.GetServiceAccountName(),
 		AutomountServiceAccountToken: ptr.To[bool](getAutomountServiceAccountToken(ctx)),
-		Volumes:                      volumes,
+		Volumes:                      allVolumes,
 		InitContainers:               []corev1.Container{initContainer},
 		Containers:                   containers,
 		SecurityContext:              &corev1.PodSecurityContext{},
@@ -354,16 +371,17 @@ func GetPodSpecForClientServerMode(ctx trivyoperator.PluginContext, config Confi
 
 	trivyConfigName := trivyoperator.GetPluginConfigMapName(Plugin)
 	// add tmp volume mount
-	volumeMounts := []corev1.VolumeMount{
+	sharedVolumeMounts := []corev1.VolumeMount{
 		{
 			Name:      tmpVolumeName,
 			ReadOnly:  false,
 			MountPath: "/tmp",
 		},
+		getScanResultVolumeMount(),
 	}
 
 	// add tmp volume
-	volumes := []corev1.Volume{
+	sharedVolumes := []corev1.Volume{
 		{
 			Name: tmpVolumeName,
 			VolumeSource: corev1.VolumeSource{
@@ -372,26 +390,31 @@ func GetPodSpecForClientServerMode(ctx trivyoperator.PluginContext, config Confi
 				},
 			},
 		},
+		getScanResultVolume(),
 	}
-
-	volumeMounts = append(volumeMounts, getScanResultVolumeMount())
-	volumes = append(volumes, getScanResultVolume())
 
 	if volume, volumeMount := config.GenerateIgnoreFileVolumeIfAvailable(trivyConfigName); volume != nil && volumeMount != nil {
-		volumes = append(volumes, *volume)
-		volumeMounts = append(volumeMounts, *volumeMount)
+		sharedVolumes = append(sharedVolumes, *volume)
+		sharedVolumeMounts = append(sharedVolumeMounts, *volumeMount)
 	}
 	if volume, volumeMount := config.GenerateIgnorePolicyVolumeIfAvailable(trivyConfigName, workload); volume != nil && volumeMount != nil {
-		volumes = append(volumes, *volume)
-		volumeMounts = append(volumeMounts, *volumeMount)
+		sharedVolumes = append(sharedVolumes, *volume)
+		sharedVolumeMounts = append(sharedVolumeMounts, *volumeMount)
 	}
 
 	if volume, volumeMount := config.GenerateSslCertDirVolumeIfAvailable(trivyConfigName); volume != nil && volumeMount != nil {
-		volumes = append(volumes, *volume)
-		volumeMounts = append(volumeMounts, *volumeMount)
+		sharedVolumes = append(sharedVolumes, *volume)
+		sharedVolumeMounts = append(sharedVolumeMounts, *volumeMount)
 	}
 
+	// Initialize the list of all volumes with shared volumes
+	allVolumes := sharedVolumes
 	for _, container := range containersSpec {
+		if ExcludeImage(ctx.GetTrivyOperatorConfig().ExcludeImages(), container.Image) {
+			continue
+		}
+		containerVolumeMounts := append([]corev1.VolumeMount{}, sharedVolumeMounts...)
+
 		env := []corev1.EnvVar{
 			constructEnvVarSourceFromConfigMap("HTTP_PROXY", trivyConfigName, keyTrivyHTTPProxy),
 			constructEnvVarSourceFromConfigMap("HTTPS_PROXY", trivyConfigName, keyTrivyHTTPSProxy),
@@ -437,7 +460,7 @@ func GetPodSpecForClientServerMode(ctx trivyoperator.PluginContext, config Confi
 		if auth, ok := containersCredentials[container.Name]; ok && secret != nil {
 			if CheckGcpCrOrPrivateRegistry(container.Image) && auth.Username == "_json_key" {
 				registryServiceAccountAuthKey := fmt.Sprintf("%s.password", container.Name)
-				createEnvandVolumeForGcr(&env, &volumeMounts, &volumes, &registryServiceAccountAuthKey, &secret.Name)
+				createEnvandVolumeForGcr(&env, &sharedVolumeMounts, &sharedVolumes, &registryServiceAccountAuthKey, &secret.Name)
 			} else {
 				registryUsernameKey := fmt.Sprintf("%s.username", container.Name)
 				registryPasswordKey := fmt.Sprintf("%s.password", container.Name)
@@ -518,7 +541,19 @@ func GetPodSpecForClientServerMode(ctx trivyoperator.PluginContext, config Confi
 				secrets = append(secrets, &secret)
 				fileName := fmt.Sprintf("%s.json", secretName)
 				mountPath := fmt.Sprintf("/sbom-%s", container.Name)
-				CreateVolumeSbomFiles(&volumeMounts, &volumes, &secretName, fileName, mountPath, container.Name)
+				sbomVolume, sbomMount := CreateVolumeSbomFiles(secretName, fileName, mountPath, container.Name)
+				// Create the volume and add it to the volumes slice if not already present
+				volumeExists := false
+				for _, v := range allVolumes {
+					if v.Name == sbomVolume.Name {
+						volumeExists = true
+						break
+					}
+				}
+				if !volumeExists {
+					allVolumes = append(allVolumes, sbomVolume)
+				}
+				containerVolumeMounts = append(containerVolumeMounts, sbomMount)
 				cmd, args = GetSbomScanCommandAndArgs(ctx, ClientServer, fmt.Sprintf("%s/%s", mountPath, fileName), encodedTrivyServerURL.String(), resultFileName)
 			}
 		}
@@ -532,7 +567,7 @@ func GetPodSpecForClientServerMode(ctx trivyoperator.PluginContext, config Confi
 			Args:                     args,
 			Resources:                requirements,
 			SecurityContext:          securityContext,
-			VolumeMounts:             volumeMounts,
+			VolumeMounts:             containerVolumeMounts,
 		})
 	}
 
@@ -542,7 +577,7 @@ func GetPodSpecForClientServerMode(ctx trivyoperator.PluginContext, config Confi
 		ServiceAccountName:           ctx.GetServiceAccountName(),
 		AutomountServiceAccountToken: ptr.To[bool](getAutomountServiceAccountToken(ctx)),
 		Containers:                   containers,
-		Volumes:                      volumes,
+		Volumes:                      allVolumes,
 	}, secrets, nil
 }
 
