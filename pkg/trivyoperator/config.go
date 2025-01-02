@@ -114,7 +114,7 @@ func GetDefaultConfig() ConfigData {
 		keyComplianceFailEntriesLimit:   "10",
 		KeyReportRecordFailedChecksOnly: "true",
 		KeyNodeCollectorImageRef:        "ghcr.io/aquasecurity/node-collector:0.2.1",
-		KeyPoliciesBundleOciRef:         "ghcr.io/aquasecurity/trivy-checks:0",
+		KeyPoliciesBundleOciRef:         "mirror.gcr.io/aquasec/trivy-checks:0",
 	}
 }
 

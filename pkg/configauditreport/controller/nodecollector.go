@@ -72,23 +72,7 @@ func (r *NodeCollectorJobController) reconcileJobs() reconcile.Func {
 			return ctrl.Result{}, nil
 		}
 
-		// Iterate over the job conditions to find the one with Status == True
-		var jobConditionType batchv1.JobConditionType
-		found := false
-		for _, condition := range job.Status.Conditions {
-			if condition.Status == corev1.ConditionTrue {
-				jobConditionType = condition.Type
-				found = true
-				break
-			}
-		}
-
-		if !found {
-			log.V(1).Info("No job condition with Status True found")
-			return ctrl.Result{}, nil
-		}
-
-		switch jobConditionType {
+		switch jobCondition := job.Status.Conditions[0].Type; jobCondition {
 		case batchv1.JobComplete, batchv1.JobSuccessCriteriaMet:
 			err = r.processCompleteScanJob(ctx, job)
 		case batchv1.JobFailed, batchv1.JobFailureTarget:
