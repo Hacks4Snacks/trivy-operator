@@ -390,8 +390,8 @@ func GetPodSpecForClientServerFSMode(ctx trivyoperator.PluginContext, config Con
 
 	var containers []corev1.Container
 
-	//sharedVolumeMounts = append(sharedVolumeMounts, getScanResultVolumeMount())
-	//sharedVolumes = append(sharedVolumes, getScanResultVolume())
+	// sharedVolumeMounts = append(sharedVolumeMounts, getScanResultVolumeMount())
+	// sharedVolumes = append(sharedVolumes, getScanResultVolume())
 
 	if volume, volumeMount := config.GenerateIgnoreFileVolumeIfAvailable(trivyConfigName); volume != nil && volumeMount != nil {
 		sharedVolumes = append(sharedVolumes, *volume)
