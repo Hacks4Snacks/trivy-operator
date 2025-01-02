@@ -101,6 +101,7 @@ func TestPlugin_GetScanJobSpec(t *testing.T) {
 				"trivy.resources.requests.memory": "100Mi",
 				"trivy.resources.limits.cpu":      "500m",
 				"trivy.resources.limits.memory":   "500Mi",
+				"trivy.containerdNamespace":       "k8s.io",
 			},
 			workloadSpec: &appsv1.ReplicaSet{
 				TypeMeta: metav1.TypeMeta{
@@ -176,7 +177,6 @@ func TestPlugin_GetScanJobSpec(t *testing.T) {
 									},
 								},
 							},
-
 							{
 								Name: "GITHUB_TOKEN",
 								ValueFrom: &corev1.EnvVarSource{
@@ -211,6 +211,7 @@ func TestPlugin_GetScanJobSpec(t *testing.T) {
 						},
 						VolumeMounts: []corev1.VolumeMount{
 							tmpVolumeMount,
+							getScanResultVolumeMount(),
 						},
 						SecurityContext: &corev1.SecurityContext{
 							Privileged:               ptr.To[bool](false),
@@ -338,6 +339,10 @@ func TestPlugin_GetScanJobSpec(t *testing.T) {
 									},
 								},
 							},
+							{
+								Name:  "CONTAINERD_NAMESPACE",
+								Value: "k8s.io",
+							},
 						},
 						Command: []string{
 							"/bin/sh",
@@ -391,6 +396,7 @@ func TestPlugin_GetScanJobSpec(t *testing.T) {
 				"trivy.resources.requests.memory": "100Mi",
 				"trivy.resources.limits.cpu":      "500m",
 				"trivy.resources.limits.memory":   "500Mi",
+				"trivy.containerdNamespace":       "k8s.io",
 			},
 			workloadSpec: &corev1.Pod{
 				TypeMeta: metav1.TypeMeta{
@@ -495,6 +501,7 @@ func TestPlugin_GetScanJobSpec(t *testing.T) {
 						},
 						VolumeMounts: []corev1.VolumeMount{
 							tmpVolumeMount,
+							getScanResultVolumeMount(),
 						},
 						SecurityContext: &corev1.SecurityContext{
 							Privileged:               ptr.To[bool](false),
@@ -626,6 +633,10 @@ func TestPlugin_GetScanJobSpec(t *testing.T) {
 								Name:  "TRIVY_INSECURE",
 								Value: "true",
 							},
+							{
+								Name:  "CONTAINERD_NAMESPACE",
+								Value: "k8s.io",
+							},
 						},
 						Command: []string{
 							"/bin/sh",
@@ -678,6 +689,7 @@ func TestPlugin_GetScanJobSpec(t *testing.T) {
 				"trivy.resources.requests.memory":  "100Mi",
 				"trivy.resources.limits.cpu":       "500m",
 				"trivy.resources.limits.memory":    "500Mi",
+				"trivy.containerdNamespace":        "k8s.io",
 			},
 			workloadSpec: &corev1.Pod{
 				TypeMeta: metav1.TypeMeta{
@@ -783,6 +795,7 @@ func TestPlugin_GetScanJobSpec(t *testing.T) {
 						},
 						VolumeMounts: []corev1.VolumeMount{
 							tmpVolumeMount,
+							getScanResultVolumeMount(),
 						},
 						SecurityContext: &corev1.SecurityContext{
 							Privileged:               ptr.To[bool](false),
@@ -914,6 +927,10 @@ func TestPlugin_GetScanJobSpec(t *testing.T) {
 								Name:  "TRIVY_NON_SSL",
 								Value: "true",
 							},
+							{
+								Name:  "CONTAINERD_NAMESPACE",
+								Value: "k8s.io",
+							},
 						},
 						Command: []string{
 							"/bin/sh",
@@ -970,6 +987,7 @@ CVE-2019-1543`,
 				"trivy.resources.requests.memory": "100Mi",
 				"trivy.resources.limits.cpu":      "500m",
 				"trivy.resources.limits.memory":   "500Mi",
+				"trivy.containerdNamespace":       "k8s.io",
 			},
 			workloadSpec: &corev1.Pod{
 				TypeMeta: metav1.TypeMeta{
@@ -1091,6 +1109,7 @@ CVE-2019-1543`,
 						},
 						VolumeMounts: []corev1.VolumeMount{
 							tmpVolumeMount,
+							getScanResultVolumeMount(),
 						},
 						SecurityContext: &corev1.SecurityContext{
 							Privileged:               ptr.To[bool](false),
@@ -1222,6 +1241,10 @@ CVE-2019-1543`,
 								Name:  "TRIVY_IGNOREFILE",
 								Value: "/etc/trivy/.trivyignore",
 							},
+							{
+								Name:  "CONTAINERD_NAMESPACE",
+								Value: "k8s.io",
+							},
 						},
 						Command: []string{
 							"/bin/sh",
@@ -1283,6 +1306,7 @@ default ignore = false`,
 				"trivy.resources.requests.memory": "100Mi",
 				"trivy.resources.limits.cpu":      "500m",
 				"trivy.resources.limits.memory":   "500Mi",
+				"trivy.containerdNamespace":       "k8s.io",
 			},
 			workloadSpec: &corev1.Pod{
 				TypeMeta: metav1.TypeMeta{
@@ -1404,6 +1428,7 @@ default ignore = false`,
 						},
 						VolumeMounts: []corev1.VolumeMount{
 							tmpVolumeMount,
+							getScanResultVolumeMount(),
 						},
 						SecurityContext: &corev1.SecurityContext{
 							Privileged:               ptr.To[bool](false),
@@ -1535,6 +1560,10 @@ default ignore = false`,
 								Name:  "TRIVY_IGNORE_POLICY",
 								Value: "/etc/trivy/policy.rego",
 							},
+							{
+								Name:  "CONTAINERD_NAMESPACE",
+								Value: "k8s.io",
+							},
 						},
 						Command: []string{
 							"/bin/sh",
@@ -1592,6 +1621,7 @@ default ignore = false`,
 				"trivy.resources.requests.memory": "100Mi",
 				"trivy.resources.limits.cpu":      "500m",
 				"trivy.resources.limits.memory":   "500Mi",
+				"trivy.containerdNamespace":       "k8s.io",
 
 				"trivy.registry.mirror.index.docker.io": "mirror.io",
 			},
@@ -1700,6 +1730,7 @@ default ignore = false`,
 						},
 						VolumeMounts: []corev1.VolumeMount{
 							tmpVolumeMount,
+							getScanResultVolumeMount(),
 						},
 						SecurityContext: &corev1.SecurityContext{
 							Privileged:               ptr.To[bool](false),
@@ -1827,6 +1858,10 @@ default ignore = false`,
 									},
 								},
 							},
+							{
+								Name:  "CONTAINERD_NAMESPACE",
+								Value: "k8s.io",
+							},
 						},
 						Command: []string{
 							"/bin/sh",
@@ -1878,6 +1913,7 @@ default ignore = false`,
 				"trivy.resources.requests.memory": "100Mi",
 				"trivy.resources.limits.cpu":      "500m",
 				"trivy.resources.limits.memory":   "500Mi",
+				"trivy.containerdNamespace":       "k8s.io",
 			},
 			workloadSpec: &appsv1.ReplicaSet{
 				TypeMeta: metav1.TypeMeta{
@@ -1988,6 +2024,7 @@ default ignore = false`,
 						},
 						VolumeMounts: []corev1.VolumeMount{
 							tmpVolumeMount,
+							getScanResultVolumeMount(),
 						},
 						SecurityContext: &corev1.SecurityContext{
 							Privileged:               ptr.To[bool](false),
@@ -2114,6 +2151,10 @@ default ignore = false`,
 										Optional: ptr.To[bool](true),
 									},
 								},
+							},
+							{
+								Name:  "CONTAINERD_NAMESPACE",
+								Value: "k8s.io",
 							},
 						},
 						Command: []string{
@@ -2167,6 +2208,7 @@ default ignore = false`,
 				"trivy.resources.requests.memory": "100Mi",
 				"trivy.resources.limits.cpu":      "500m",
 				"trivy.resources.limits.memory":   "500Mi",
+				"trivy.containerdNamespace":       "k8s.io",
 			},
 			workloadSpec: &corev1.Pod{
 				TypeMeta: metav1.TypeMeta{
@@ -2346,6 +2388,10 @@ default ignore = false`,
 										Optional: ptr.To[bool](true),
 									},
 								},
+							},
+							{
+								Name:  "CONTAINERD_NAMESPACE",
+								Value: "k8s.io",
 							},
 						},
 						Command: []string{
@@ -2396,6 +2442,7 @@ default ignore = false`,
 				"trivy.resources.requests.memory": "100Mi",
 				"trivy.resources.limits.cpu":      "500m",
 				"trivy.resources.limits.memory":   "500Mi",
+				"trivy.containerdNamespace":       "k8s.io",
 			},
 			workloadSpec: &corev1.Pod{
 				TypeMeta: metav1.TypeMeta{
@@ -2575,6 +2622,10 @@ default ignore = false`,
 										Optional: ptr.To[bool](true),
 									},
 								},
+							},
+							{
+								Name:  "CONTAINERD_NAMESPACE",
+								Value: "k8s.io",
 							},
 						},
 						Command: []string{
@@ -2626,6 +2677,7 @@ default ignore = false`,
 				"trivy.resources.requests.memory": "100Mi",
 				"trivy.resources.limits.cpu":      "500m",
 				"trivy.resources.limits.memory":   "500Mi",
+				"trivy.containerdNamespace":       "k8s.io",
 			},
 			workloadSpec: &corev1.Pod{
 				TypeMeta: metav1.TypeMeta{
@@ -2807,6 +2859,10 @@ default ignore = false`,
 								},
 							},
 							{
+								Name:  "CONTAINERD_NAMESPACE",
+								Value: "k8s.io",
+							},
+							{
 								Name:  "TRIVY_INSECURE",
 								Value: "true",
 							},
@@ -2860,6 +2916,7 @@ default ignore = false`,
 				"trivy.resources.requests.memory":  "100Mi",
 				"trivy.resources.limits.cpu":       "500m",
 				"trivy.resources.limits.memory":    "500Mi",
+				"trivy.containerdNamespace":        "k8s.io",
 			},
 			workloadSpec: &corev1.Pod{
 				TypeMeta: metav1.TypeMeta{
@@ -3044,6 +3101,10 @@ default ignore = false`,
 								Name:  "TRIVY_NON_SSL",
 								Value: "true",
 							},
+							{
+								Name:  "CONTAINERD_NAMESPACE",
+								Value: "k8s.io",
+							},
 						},
 						Command: []string{
 							"/bin/sh",
@@ -3062,7 +3123,10 @@ default ignore = false`,
 								corev1.ResourceMemory: resource.MustParse("500Mi"),
 							},
 						},
-						VolumeMounts: []corev1.VolumeMount{getTmpVolumeMount(), getScanResultVolumeMount()},
+						VolumeMounts: []corev1.VolumeMount{
+							getTmpVolumeMount(),
+							getScanResultVolumeMount(),
+						},
 						SecurityContext: &corev1.SecurityContext{
 							Privileged:               ptr.To[bool](false),
 							AllowPrivilegeEscalation: ptr.To[bool](false),
@@ -3098,6 +3162,7 @@ CVE-2019-1543`,
 				"trivy.resources.requests.memory": "100Mi",
 				"trivy.resources.limits.cpu":      "500m",
 				"trivy.resources.limits.memory":   "500Mi",
+				"trivy.containerdNamespace":       "k8s.io",
 			},
 			workloadSpec: &corev1.Pod{
 				TypeMeta: metav1.TypeMeta{
@@ -3298,6 +3363,10 @@ CVE-2019-1543`,
 								Name:  "TRIVY_IGNOREFILE",
 								Value: "/etc/trivy/.trivyignore",
 							},
+							{
+								Name:  "CONTAINERD_NAMESPACE",
+								Value: "k8s.io",
+							},
 						},
 						Command: []string{
 							"/bin/sh",
@@ -3358,6 +3427,7 @@ default ignore = false`,
 				"trivy.resources.requests.memory": "100Mi",
 				"trivy.resources.limits.cpu":      "500m",
 				"trivy.resources.limits.memory":   "500Mi",
+				"trivy.containerdNamespace":       "k8s.io",
 			},
 			workloadSpec: &corev1.Pod{
 				TypeMeta: metav1.TypeMeta{
@@ -3558,6 +3628,10 @@ default ignore = false`,
 								Name:  "TRIVY_IGNORE_POLICY",
 								Value: "/etc/trivy/policy.rego",
 							},
+							{
+								Name:  "CONTAINERD_NAMESPACE",
+								Value: "k8s.io",
+							},
 						},
 						Command: []string{
 							"/bin/sh",
@@ -3613,6 +3687,7 @@ default ignore = false`,
 				"trivy.resources.requests.memory": "100Mi",
 				"trivy.resources.limits.cpu":      "500m",
 				"trivy.resources.limits.memory":   "500Mi",
+				"trivy.containerdNamespace":       "k8s.io",
 			},
 			workloadSpec: &corev1.Pod{
 				TypeMeta: metav1.TypeMeta{
@@ -3793,6 +3868,10 @@ default ignore = false`,
 									},
 								},
 							},
+							{
+								Name:  "CONTAINERD_NAMESPACE",
+								Value: "k8s.io",
+							},
 						},
 						Command: []string{
 							"/bin/sh",
@@ -3842,6 +3921,7 @@ default ignore = false`,
 				"trivy.resources.requests.memory": "100Mi",
 				"trivy.resources.limits.cpu":      "500m",
 				"trivy.resources.limits.memory":   "500Mi",
+				"trivy.containerdNamespace":       "k8s.io",
 				"trivy.timeout":                   "5m0s",
 			},
 			workloadSpec: &corev1.Pod{
@@ -3920,6 +4000,7 @@ default ignore = false`,
 								MountPath: "/tmp",
 								ReadOnly:  false,
 							},
+							getScanResultVolumeMount(),
 						},
 						SecurityContext: &corev1.SecurityContext{
 							Privileged:               ptr.To[bool](false),
@@ -4017,6 +4098,7 @@ default ignore = false`,
 								MountPath: "/tmp",
 								ReadOnly:  false,
 							},
+							getScanResultVolumeMount(),
 						},
 						SecurityContext: &corev1.SecurityContext{
 							Privileged:               ptr.To[bool](false),
@@ -4282,6 +4364,7 @@ default ignore = false`,
 								MountPath: "/tmp",
 								ReadOnly:  false,
 							},
+							getScanResultVolumeMount(),
 						},
 						SecurityContext: &corev1.SecurityContext{
 							Privileged:               ptr.To[bool](false),
@@ -4489,7 +4572,7 @@ default ignore = false`,
 			},
 		},
 		{
-			name: "Trivy rootfs scan command in Standalone mode",
+			name: "Trivy fs scan command in Standalone mode",
 			trivyOperatorConfig: map[string]string{
 				trivyoperator.KeyVulnerabilityScannerEnabled:  "true",
 				trivyoperator.KeyExposedSecretsScannerEnabled: "true",
@@ -4499,7 +4582,7 @@ default ignore = false`,
 				"trivy.repository":                "docker.io/aquasec/trivy",
 				"trivy.tag":                       "0.35.0",
 				"trivy.mode":                      string(trivy.Standalone),
-				"trivy.command":                   string(trivy.Rootfs),
+				"trivy.command":                   string(trivy.Filesystem),
 				"trivy.dbRepository":              trivy.DefaultDBRepository,
 				"trivy.javaDbRepository":          trivy.DefaultJavaDBRepository,
 				"trivy.resources.requests.cpu":    "100m",
@@ -4524,14 +4607,16 @@ default ignore = false`,
 							Image: "nginx:1.9.1",
 						},
 					},
-					NodeName: "kind-control-pane",
-				}},
+					NodeName: "kind-control-plane",
+				},
+			},
 			expectedJobSpec: corev1.PodSpec{
 				Affinity:                     trivyoperator.LinuxNodeAffinity(),
 				RestartPolicy:                corev1.RestartPolicyNever,
 				ServiceAccountName:           "trivyoperator-sa",
 				ImagePullSecrets:             []corev1.LocalObjectReference{},
 				AutomountServiceAccountToken: ptr.To[bool](false),
+
 				Volumes: []corev1.Volume{
 					{
 						Name: trivy.FsSharedVolumeName,
@@ -4551,17 +4636,16 @@ default ignore = false`,
 					},
 					getScanResultVolume(),
 				},
+
 				InitContainers: []corev1.Container{
 					{
+						// Copies the trivy binary to a shared volume
 						Name:                     "00000000-0000-0000-0000-000000000001",
 						Image:                    "docker.io/aquasec/trivy:0.35.0",
 						ImagePullPolicy:          corev1.PullIfNotPresent,
 						TerminationMessagePolicy: corev1.TerminationMessageFallbackToLogsOnError,
 						Command: []string{
-							"cp",
-							"-v",
-							"/usr/local/bin/trivy",
-							trivy.SharedVolumeLocationOfTrivy,
+							"cp", "-v", "/usr/local/bin/trivy", trivy.SharedVolumeLocationOfTrivy,
 						},
 						Resources: corev1.ResourceRequirements{
 							Requests: corev1.ResourceList{
@@ -4581,9 +4665,10 @@ default ignore = false`,
 							},
 							{
 								Name:      "tmp",
-								MountPath: "/tmp",
 								ReadOnly:  false,
+								MountPath: "/tmp",
 							},
+							getScanResultVolumeMount(),
 						},
 						SecurityContext: &corev1.SecurityContext{
 							Privileged:               ptr.To[bool](false),
@@ -4636,7 +4721,6 @@ default ignore = false`,
 									},
 								},
 							},
-
 							{
 								Name: "GITHUB_TOKEN",
 								ValueFrom: &corev1.EnvVarSource{
@@ -4650,14 +4734,10 @@ default ignore = false`,
 								},
 							},
 						},
-						Command: []string{
-							"trivy",
-						},
+						Command: []string{"trivy"},
 						Args: []string{
-							"--cache-dir",
-							"/var/trivyoperator/trivy-db",
-							"image",
-							"--download-db-only",
+							"--cache-dir", "/var/trivyoperator/trivy-db",
+							"image", "--download-db-only",
 							"--db-repository", trivy.DefaultDBRepository,
 						},
 						Resources: corev1.ResourceRequirements{
@@ -4678,9 +4758,10 @@ default ignore = false`,
 							},
 							{
 								Name:      "tmp",
-								MountPath: "/tmp",
 								ReadOnly:  false,
+								MountPath: "/tmp",
 							},
+							getScanResultVolumeMount(),
 						},
 						SecurityContext: &corev1.SecurityContext{
 							Privileged:               ptr.To[bool](false),
@@ -4803,12 +4884,10 @@ default ignore = false`,
 							"--cache-dir",
 							"/var/trivyoperator/trivy-db",
 							"--quiet",
-							"rootfs",
-							"--security-checks",
-							"vuln,secret",
+							"filesystem",
+							"--security-checks", "vuln,secret",
 							"--skip-update",
-							"--format",
-							"json",
+							"--format", "json",
 							"/",
 							"--slow",
 						},
@@ -4830,8 +4909,8 @@ default ignore = false`,
 							},
 							{
 								Name:      "tmp",
-								MountPath: "/tmp",
 								ReadOnly:  false,
+								MountPath: "/tmp",
 							},
 							getScanResultVolumeMount(),
 						},
@@ -4846,7 +4925,7 @@ default ignore = false`,
 					},
 				},
 				SecurityContext: &corev1.PodSecurityContext{},
-				NodeName:        "kind-control-pane",
+				NodeName:        "kind-control-plane",
 			},
 		},
 		{
@@ -4946,6 +5025,7 @@ default ignore = false`,
 								MountPath: "/tmp",
 								ReadOnly:  false,
 							},
+							getScanResultVolumeMount(),
 						},
 						SecurityContext: &corev1.SecurityContext{
 							Privileged:               ptr.To[bool](false),
@@ -5170,6 +5250,7 @@ default ignore = false`,
 				"trivy.resources.requests.memory": "100Mi",
 				"trivy.resources.limits.cpu":      "500m",
 				"trivy.resources.limits.memory":   "500Mi",
+				"trivy.containerdNamespace":       "k8s.io",
 
 				"trivy.registry.mirror.000000000000.dkr.ecr.us-east-1.amazonaws.com": "000000000000.dkr.ecr.eu-west-1.amazonaws.com",
 			},
@@ -5278,6 +5359,7 @@ default ignore = false`,
 						},
 						VolumeMounts: []corev1.VolumeMount{
 							tmpVolumeMount,
+							getScanResultVolumeMount(),
 						},
 						SecurityContext: &corev1.SecurityContext{
 							Privileged:               ptr.To[bool](false),
@@ -5409,6 +5491,10 @@ default ignore = false`,
 								Name:  "AWS_REGION",
 								Value: "eu-west-1",
 							},
+							{
+								Name:  "CONTAINERD_NAMESPACE",
+								Value: "k8s.io",
+							},
 						},
 						Command: []string{
 							"/bin/sh",
@@ -5461,6 +5547,7 @@ default ignore = false`,
 				"trivy.resources.requests.memory": "100Mi",
 				"trivy.resources.limits.cpu":      "500m",
 				"trivy.resources.limits.memory":   "500Mi",
+				"trivy.containerdNamespace":       "k8s.io",
 			},
 			workloadSpec: &corev1.Pod{
 				TypeMeta: metav1.TypeMeta{
@@ -5575,6 +5662,7 @@ default ignore = false`,
 						},
 						VolumeMounts: []corev1.VolumeMount{
 							tmpVolumeMount,
+							getScanResultVolumeMount(),
 						},
 						SecurityContext: &corev1.SecurityContext{
 							Privileged:               ptr.To[bool](false),
@@ -5724,6 +5812,10 @@ default ignore = false`,
 									},
 								},
 							},
+							{
+								Name:  "CONTAINERD_NAMESPACE",
+								Value: "k8s.io",
+							},
 						},
 						Command: []string{
 							"/bin/sh",
@@ -5776,6 +5868,7 @@ default ignore = false`,
 				"trivy.resources.requests.memory": "100Mi",
 				"trivy.resources.limits.cpu":      "500m",
 				"trivy.resources.limits.memory":   "500Mi",
+				"trivy.containerdNamespace":       "k8s.io",
 
 				"trivy.registry.mirror.index.docker.io": "mirror.io",
 			},
@@ -5892,6 +5985,7 @@ default ignore = false`,
 						},
 						VolumeMounts: []corev1.VolumeMount{
 							tmpVolumeMount,
+							getScanResultVolumeMount(),
 						},
 						SecurityContext: &corev1.SecurityContext{
 							Privileged:               ptr.To[bool](false),
@@ -6041,6 +6135,10 @@ default ignore = false`,
 									},
 								},
 							},
+							{
+								Name:  "CONTAINERD_NAMESPACE",
+								Value: "k8s.io",
+							},
 						},
 						Command: []string{
 							"/bin/sh",
@@ -6141,6 +6239,7 @@ default ignore = false`,
 			"trivy.resources.requests.memory": "100Mi",
 			"trivy.resources.limits.cpu":      "500m",
 			"trivy.resources.limits.memory":   "500Mi",
+			"trivy.containerdNamespace":       "k8s.io",
 			"trivy.timeout":                   "5m0s",
 		},
 		workloadSpec: &corev1.Pod{
@@ -6220,6 +6319,7 @@ default ignore = false`,
 							MountPath: "/tmp",
 							ReadOnly:  false,
 						},
+						getScanResultVolumeMount(),
 					},
 					SecurityContext: &corev1.SecurityContext{
 						Privileged:               ptr.To[bool](false),
@@ -6317,6 +6417,7 @@ default ignore = false`,
 							MountPath: "/tmp",
 							ReadOnly:  false,
 						},
+						getScanResultVolumeMount(),
 					},
 					SecurityContext: &corev1.SecurityContext{
 						Privileged:               ptr.To[bool](false),

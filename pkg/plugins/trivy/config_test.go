@@ -802,6 +802,7 @@ func TestPlugin_Init(t *testing.T) {
 				"trivy.slow":                      "true",
 				"trivy.mode":                      string(Standalone),
 				"trivy.timeout":                   "5m0s",
+				"trivy.containerdNamespace":       "k8s.io",
 				"trivy.dbRepository":              DefaultDBRepository,
 				"trivy.javaDbRepository":          DefaultJavaDBRepository,
 				"trivy.useBuiltinRegoPolicies":    "true",
