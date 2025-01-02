@@ -1,10 +1,10 @@
 module github.com/aquasecurity/trivy-operator
 
-go 1.22.9
+go 1.23.4
 
 require (
 	github.com/CycloneDX/cyclonedx-go v0.9.2
-	github.com/aquasecurity/trivy v0.58.1-0.20241216110933-f0b3a99bf276
+	github.com/aquasecurity/trivy v0.58.1
 	github.com/aquasecurity/trivy-checks v1.4.0
 	github.com/aquasecurity/trivy-kubernetes v0.6.7-0.20241101182546-89bffc3932bc
 	github.com/aws/aws-sdk-go v1.55.5
@@ -26,7 +26,7 @@ require (
 	github.com/stretchr/testify v1.10.0
 	go.uber.org/automaxprocs v1.6.0
 	go.uber.org/multierr v1.11.0
-	golang.org/x/net v0.32.0
+	golang.org/x/net v0.33.0
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028
 	k8s.io/api v0.31.3
 	k8s.io/apiextensions-apiserver v0.31.3
