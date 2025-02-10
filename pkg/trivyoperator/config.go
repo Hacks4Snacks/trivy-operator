@@ -467,7 +467,7 @@ func (c ConfigData) PolicyBundleOciUser() string {
 func (c ConfigData) PolicyBundleOciPassword() string {
 	return c[KeyPoliciesBundleOciPassword]
 }
-func (c ConfigData) GeTrivyServerURL() string {
+func (c ConfigData) GetTrivyServerURL() string {
 	return c[KeyTrivyServerURL]
 }
 func (c ConfigData) GetRequiredData(key string) (string, error) {

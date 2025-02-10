@@ -110,8 +110,8 @@ func (r *NodeReconciler) reconcileNodes() reconcile.Func {
 		log.V(1).Info("Checking node collector jobs limit", "count", jobsCount, "limit", r.ConcurrentScanJobsLimit)
 
 		if limitExceeded {
-			log.V(1).Info("Pushing back node collector job", "count", jobsCount, "retryAfter", r.ScanJobRetryAfter)
-			return ctrl.Result{RequeueAfter: r.Config.ScanJobRetryAfter}, nil
+			log.V(1).Info("Pushing back node collector job", "count", jobsCount, "retryAfter", r.ScanJobDelayRequeue)
+			return ctrl.Result{RequeueAfter: r.Config.ScanJobDelayRequeue}, nil
 		}
 		cluster, err := k8s.GetCluster()
 		if err != nil {
