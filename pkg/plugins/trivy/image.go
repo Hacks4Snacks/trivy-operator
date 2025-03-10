@@ -429,6 +429,9 @@ func GetPodSpecForClientServerMode(ctx trivyoperator.PluginContext, config Confi
 	}
 
 	for _, container := range containersSpec {
+		if ExcludeImage(ctx.GetTrivyOperatorConfig().ExcludeImages(), container.Image) {
+			continue
+		}
 		env := []corev1.EnvVar{
 			constructEnvVarSourceFromConfigMap("HTTP_PROXY", trivyConfigName, keyTrivyHTTPProxy),
 			constructEnvVarSourceFromConfigMap("HTTPS_PROXY", trivyConfigName, keyTrivyHTTPSProxy),
