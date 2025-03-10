@@ -79,7 +79,7 @@ const (
 	KeyScanJobContainerSecurityContext     = "scanJob.podTemplateContainerSecurityContext"
 	keyScanJobPodSecurityContext           = "scanJob.podTemplatePodSecurityContext"
 	keyScanJobPodTemplateLabels            = "scanJob.podTemplateLabels"
-	keyScanJobExcludeImags                 = "scanJob.excludeImages"
+	keyScanJobExcludeImages                = "scanJob.excludeImages"
 	KeyScanJobPodPriorityClassName         = "scanJob.podPriorityClassName"
 	keyComplianceFailEntriesLimit          = "compliance.failEntriesLimit"
 	keySkipResourceByLabels                = "skipResourceByLabels"
@@ -208,7 +208,7 @@ func (c ConfigData) GetScanJobTolerations() ([]corev1.Toleration, error) {
 
 func (c ConfigData) ExcludeImages() []string {
 	patterns := make([]string, 0)
-	if excludeImagesPattern, ok := c[keyScanJobExcludeImags]; ok {
+	if excludeImagesPattern, ok := c[keyScanJobExcludeImages]; ok {
 		for _, s := range strings.Split(excludeImagesPattern, ",") {
 			if strings.TrimSpace(s) == "" {
 				continue
