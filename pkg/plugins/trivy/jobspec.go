@@ -2,6 +2,7 @@ package trivy
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -187,7 +188,7 @@ func constructEnvVarSourceFromSecret(envName, secretName, secretKey string) (res
 					Name: secretName,
 				},
 				Key:      secretKey,
-				Optional: ptr.To[bool](true),
+				Optional: ptr.To(true),
 			},
 		},
 	}
@@ -203,7 +204,7 @@ func constructEnvVarSourceFromConfigMap(envName, configName, configKey string) (
 					Name: configName,
 				},
 				Key:      configKey,
-				Optional: ptr.To[bool](true),
+				Optional: ptr.To(true),
 			},
 		},
 	}
@@ -279,7 +280,7 @@ func prepareVex(config Config, volumes []corev1.Volume, volumeMounts []corev1.Vo
 
 	vexConfigMapName := config.GetVexConfigMapName()
 	if vexConfigMapName == "" {
-		return volumes, volumeMounts, fmt.Errorf("vex is enabled but no configMap name specified")
+		return volumes, volumeMounts, errors.New("vex is enabled but no configMap name specified")
 	}
 
 	vexVolume := corev1.Volume{
