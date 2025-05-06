@@ -239,7 +239,7 @@ var (
 	trivyScanner = v1alpha1.Scanner{
 		Name:    v1alpha1.ScannerNameTrivy,
 		Vendor:  "Aqua Security",
-		Version: "0.25.0",
+		Version: "0.26.0",
 	}
 )
 
@@ -441,7 +441,7 @@ func (h *Helper) UpdateDeploymentImage(namespace, name string) error {
 		}
 
 		dcDeploy := deployment.DeepCopy()
-		dcDeploy.Spec.Template.Spec.Containers[0].Image = "wordpress:5"
+		dcDeploy.Spec.Template.Spec.Containers[0].Image = "wordpress:6.7"
 		err = h.kubeClient.Update(context.TODO(), dcDeploy)
 		if err != nil && errors.IsConflict(err) {
 			return false, nil
