@@ -526,6 +526,7 @@ type configManager struct {
 	namespace string
 }
 
+// test
 func (c *configManager) EnsureDefault(ctx context.Context) error {
 	_, err := c.client.CoreV1().ConfigMaps(c.namespace).Get(ctx, ConfigMapName, metav1.GetOptions{})
 	if err != nil {
