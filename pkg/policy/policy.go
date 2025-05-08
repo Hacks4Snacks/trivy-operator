@@ -344,7 +344,7 @@ func resourceBytes(resource client.Object, inputs [][]byte) ([]byte, error) {
 }
 
 // GetResultID return the result id found in aliases (legacy) otherwise use AvdID
-func (r *Policies) GetResultID(result scan.Result) string {
+func GetResultID(result scan.Result) string {
 	id := result.Rule().AVDID
 	if len(result.Rule().Aliases) > 0 {
 		id = result.Rule().Aliases[0]
@@ -352,8 +352,13 @@ func (r *Policies) GetResultID(result scan.Result) string {
 	return id
 }
 
-func (r *Policies) HasSeverity(resultSeverity severity.Severity) bool {
-	defaultSeverity := r.cac.GetSeverity()
+// GetDefaultSeverity returns the default severity from ConfigAuditConfig
+func (p *Policies) GetDefaultSeverity() string {
+	return p.cac.GetSeverity()
+}
+
+// HasSeverity checks if the result severity is in the default severity
+func HasSeverity(resultSeverity severity.Severity, defaultSeverity string) bool {
 	if defaultSeverity == "" {
 		defaultSeverity = trivy.DefaultSeverity
 	}
