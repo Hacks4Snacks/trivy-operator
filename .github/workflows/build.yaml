@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - integration
     paths-ignore:
       - .github/ISSUE_TEMPLATE/*.md
       - "*.md"
@@ -14,6 +15,7 @@ on:
   pull_request:
     branches:
       - main
+      - integration
     paths-ignore:
       - .github/ISSUE_TEMPLATE/*.md
       - "*.md"
