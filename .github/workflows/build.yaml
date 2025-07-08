@@ -159,7 +159,7 @@ jobs:
           files: ./itest/trivy-operator/coverage.txt
 
   e2e-testing:
-    name: Run end to end testing
+    name: Run E2E testing
     needs:
       - itest-trivy-operator
     runs-on: ubuntu-latest
@@ -225,7 +225,7 @@ jobs:
           ./bin/kuttl test --start-kind=false --namespace e2e-test --config tests/e2e/config/image-mode.yaml
 
           ./tests/resources-cleanup.sh > /dev/null 2>&1
-      - name: Files System scan mode producing vulnerability,misconfig and exposedsecrets reports tests
+      - name: File system scan mode producing vulnerability,misconfig and exposedsecrets reports tests
         run: |
           kubectl create namespace e2e-test
 
@@ -240,7 +240,7 @@ jobs:
           ./bin/kuttl test --start-kind=false --namespace e2e-test --config tests/e2e/config/client-server.yaml
 
           ./tests/resources-cleanup.sh > /dev/null 2>&1
-      - name: Standalon mode with Sbom scanning
+      - name: Standalone mode with Sbom scanning
           reports tests
         run: >
           kubectl create namespace e2e-test
@@ -256,7 +256,7 @@ jobs:
           ./bin/kuttl test --start-kind=false --namespace e2e-test --config tests/e2e/config/client-server-sbom.yaml
 
           ./tests/resources-cleanup.sh > /dev/null 2>&1
-      - name: file system with Sbom scanning
+      - name: File system with Sbom scanning
           reports tests
         run: >
           kubectl create namespace e2e-test
