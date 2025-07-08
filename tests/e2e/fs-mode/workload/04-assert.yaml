@@ -1,4 +1,5 @@
 ---
+# Note: This assertion for ExposedSecretReport is optional and might not be generated if no secrets are detected in the test image.
 apiVersion: aquasecurity.github.io/v1alpha1
 kind: ExposedSecretReport
 metadata:

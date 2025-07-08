@@ -3236,11 +3236,10 @@ data:
   node.collector.imageRef: "ghcr.io/aquasecurity/node-collector:0.3.1"
   policies.bundle.oci.ref: "mirror.gcr.io/aquasec/trivy-checks:1"
   policies.bundle.insecure: "false"
-  vulnerabilityCacheEnabled: "true"
-  vulnerabilityCacheTTL: 23h
-
 
   node.collector.nodeSelector: "true"
+  vulnerabilityCacheEnabled: "true"
+  vulnerabilityCacheTTL: "24h"
 ---
 # Source: trivy-operator/templates/configmaps/trivy-operator-config.yaml
 kind: ConfigMap
@@ -3254,7 +3253,7 @@ metadata:
     app.kubernetes.io/version: "0.27.2"
     app.kubernetes.io/managed-by: kubectl
 data:
-  OPERATOR_LOG_DEV_MODE: "true"
+  OPERATOR_LOG_DEV_MODE: "false"
   OPERATOR_SCAN_JOB_TTL: ""
   OPERATOR_SCAN_JOB_TIMEOUT: "5m"
   OPERATOR_CONCURRENT_SCAN_JOBS_LIMIT: "10"
